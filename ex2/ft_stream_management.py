@@ -1,5 +1,4 @@
 import sys
-from typing import IO
 
 
 def ft_one_arg(argv: list[str]) -> None:
@@ -8,12 +7,12 @@ def ft_one_arg(argv: list[str]) -> None:
 
 def ft_open_file(arg: str) -> str | None:
     try:
-        io: IO = open(arg, "r")
+        io = open(arg, "r")
         file_str = io.read()
         io.close()
         return file_str
     except OSError as e:
-        print(f"Error opening file '{arg}': {e}")
+        print(f"[STDERR] Error opening file '{arg}': {e}", file=sys.stderr)
         return None
 
 
@@ -25,16 +24,19 @@ def add_hash(file_str: str) -> None:
     print("---")
     print(new_str)
     print("---")
-    file_name = input("Enter new file name (or empty): ")
+    print("Enter new file name (or empty): ", end="")
+    sys.stdout.flush()
+    file_name = sys.stdin.readline().strip()
     if file_name:
         print(f"Saving data to '{file_name}'")
         try:
-            new_file: IO = open(file_name, "w")
+            new_file = open(file_name, "w")
             new_file.write(new_str)
             new_file.close()
             print(f"Data saved in file '{file_name}'.")
         except OSError as e:
-            print(f"Error opening file '{file_name}': {e}")
+            print(f"[STDERR] Error opening file '{file_name}': {e}",
+                  file=sys.stderr)
             print("Data not saved.")
     else:
         print("Not saving data.")
@@ -42,8 +44,7 @@ def add_hash(file_str: str) -> None:
 
 if __name__ == "__main__":
     argv = sys.argv
-    argc = len(argv)
-    if argc != 2:
+    if len(argv) != 2:
         ft_one_arg(argv)
     else:
         print("=== Cyber Archives Recovery & Preservation ===")
@@ -54,5 +55,4 @@ if __name__ == "__main__":
             print(file_str)
             print("---")
             print(f"File '{argv[1]}' closed.")
-            print()
             add_hash(file_str)
